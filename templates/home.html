@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- ========================= SECTION MAIN ========================= -->
+<section class="section-intro padding-y-sm">
+	<div class="container">
+		<div class="intro-banner-wrap">
+			<img src="{% static 'images/banners/blackfriday.png' %}" class="img-fluid rounded">
+		</div>
+	</div> <!-- container //  -->
+</section>
+<!-- ========================= SECTION MAIN END// ========================= -->
+
+<!-- ========================= SECTION  ========================= -->
+<section class="section-name padding-y-sm">
+	<div class="container">
+		<header class="section-heading">
+			<a href="{% url 'store' %}" class="btn btn-outline-primary float-right">Ver Todo</a>
+			<h3 class="section-title">Los más vendidos</h3>
+		</header><!-- sect-heading -->
+
+		<div class="row">
+
+			{% for product in products %}
+			<div class="col-md-3">
+				<div class="card card-product-grid">
+					<a href="{{ product.get_url }}" class="img-wrap"> <img src="{{ product.images.url }}"> </a>
+					<figcaption class="info-wrap">
+						<a href="{{ product.get_url }}" class="title">{{product.product_name}}</a>
+						<div class="price mt-1">{{ product.price }}</div> <!-- price-wrap.// -->
+
+						<div class="rating-star">
+							<span>
+								<i class="fa fa-star{% if product.averageReview < 0.5 %}-o{% elif product.averageReview >= 0.5 and product.averageReview < 1 %}-half-o {% endif %}"
+									aria-hidden="true"></i>
+								<i class="fa fa-star{% if product.averageReview < 1.5 %}-o{% elif product.averageReview >= 1.5 and product.averageReview < 2 %}-half-o {% endif %}"
+									aria-hidden="true"></i>
+								<i class="fa fa-star{% if product.averageReview < 2.5 %}-o{% elif product.averageReview >= 2.5 and product.averageReview < 3 %}-half-o {% endif %}"
+									aria-hidden="true"></i>
+								<i class="fa fa-star{% if product.averageReview < 3.5 %}-o{% elif product.averageReview >= 3.5 and product.averageReview < 4 %}-half-o {% endif %}"
+									aria-hidden="true"></i>
+								<i class="fa fa-star{% if product.averageReview < 4.5 %}-o{% elif product.averageReview >= 4.5 and product.averageReview < 5 %}-half-o {% endif %}"
+									aria-hidden="true"></i>
+							</span>
+						</div>
+
+					</figcaption>
+				</div>
+			</div> <!-- col.// -->
+			{% endfor %}
+		</div>
+	</div><!-- container // -->
+</section>
+<!-- ========================= SECTION  END// ========================= -->
+<!-- ========================= KMeans Clusters Section ========================= -->
+<div class="text-center my-4">
+	<button id="download-pdf" class="btn btn-primary">Descargar PDF</button>
+</div>
+
+<section class="section-clusters padding-y-sm" id="pdf-content">
+    <div class="container">
+        <header class="section-heading">
+            <h3 class="section-title">Productos por Clúster (KMeans)</h3>
+        </header>
+
+        <div class="clusters-container">
+            {% for cluster in unique_clusters %}
+            <div class="cluster">
+                <h4>Clúster {{ cluster }}</h4>
+                <ul>
+                    {% for product in products %}
+                        {% if product.cluster == cluster %}
+                        <li>
+                            <strong>{{ product.product_name }}</strong>
+                            <p>{{ product.price }} | Reseñas:
+                                {% for review in product_reviews.items %}
+                                    {% if review.0 == product.id %}
+                                        {{ review.1.avg_rating }} ({{ review.1.review_count }} reseñas)
+                                    {% endif %}
+                                {% endfor %}
+                            </p>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+<!-- ========================= KMeans Clusters Section END ========================= -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+	document.getElementById("download-pdf").addEventListener("click", function () {
+		const { jsPDF } = window.jspdf;
+
+		// Crear una instancia de jsPDF
+		const doc = new jsPDF({
+			orientation: "portrait",
+			unit: "mm",
+			format: "a4",
+		});
+
+		// Seleccionar el contenido HTML
+		const content = document.getElementById("pdf-content");
+
+		// Clonar el nodo para evitar manipular el DOM original
+		const clone = content.cloneNode(true);
+
+		// Aplicar estilos específicos para el PDF
+		clone.style.fontSize = "6px"; // Reducir aún más el tamaño de la fuente
+		clone.style.lineHeight = "1.0"; // Reducir el espaciado entre líneas
+		clone.style.transform = "scale(0.6)"; // Ajustar escalado para que el contenido se adapte mejor
+		clone.style.transformOrigin = "top left"; // Origen del escalado
+		clone.style.width = "210mm"; // Ancho estándar de A4
+		clone.style.margin = "0";
+
+		// Reducir tamaños de encabezados
+		clone.querySelectorAll("h3").forEach((h3) => {
+			h3.style.fontSize = "10px"; // Tamaño para títulos principales
+		});
+		clone.querySelectorAll("h4").forEach((h4) => {
+			h4.style.fontSize = "8px"; // Tamaño para títulos secundarios
+		});
+		clone.querySelectorAll("li").forEach((li) => {
+			li.style.fontSize = "6px"; // Tamaño para listas
+		});
+		clone.querySelectorAll("p").forEach((p) => {
+			p.style.fontSize = "6px"; // Tamaño para párrafos
+		});
+
+		// Crear un contenedor temporal para renderizar el contenido
+		const tempContainer = document.createElement("div");
+		tempContainer.appendChild(clone);
+		document.body.appendChild(tempContainer);
+
+		// Generar el PDF
+		doc.html(tempContainer, {
+			callback: function (doc) {
+				doc.save("clusters_productos.pdf");
+				document.body.removeChild(tempContainer); // Eliminar el contenedor temporal
+			},
+			x: 10,
+			y: 10,
+		});
+	});
+</script>
+</body>
+
+</html>
+
+{% endblock %}
