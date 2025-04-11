@@ -158,3 +158,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 ALLOWED_HOSTS=['localhost','web-production-55d8.up.railway.app','web-production-3089.up.railway.app']
+
+
+CSRF_TRUSTED_ORIGINS=['http://*','web-production-3089.up.railway.app']
+
