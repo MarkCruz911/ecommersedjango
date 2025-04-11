@@ -164,3 +164,5 @@ ALLOWED_HOSTS=['localhost','web-production-55d8.up.railway.app','web-production-
 
 CSRF_TRUSTED_ORIGINS=['http://*','https://web-production-3089.up.railway.app']
 
+# Email backend para desarrollo - muestra el email en la consola
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
