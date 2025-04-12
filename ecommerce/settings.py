@@ -31,7 +31,7 @@ GEMINI_MODEL   = os.getenv('GEMINI_MODEL')
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'tu-clave-secreta-aqui'
 
-INSTALLED_APPS += ['cloudinary', 'cloudinary_storage']
+
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
@@ -63,6 +63,8 @@ INSTALLED_APPS = [
     'carts',
     'orders',
 ]
+
+INSTALLED_APPS += ['cloudinary', 'cloudinary_storage']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
