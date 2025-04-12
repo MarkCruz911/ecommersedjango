@@ -15,6 +15,7 @@ from decouple import config
 from dotenv import load_dotenv
 import os
 import dj_database_url
+import cloudinary
 
 # Configuración explícita de Cloudinary
 cloudinary.config(
