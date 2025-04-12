@@ -90,7 +90,6 @@ def place_order(request, total=0, quantity=0):
     tax = round((16/100) * total, 2)
     grand_total = total + tax
 
-
     if request.method == 'POST':
         form = OrderForm(request.POST)
 
@@ -112,10 +111,10 @@ def place_order(request, total=0, quantity=0):
             data.ip = request.META.get('REMOTE_ADDR')
             data.save()
 
-            yr=int(datetime.date.today().strftime('%Y'))
-            mt=int(datetime.date.today().strftime('%m'))
-            dt=int(datetime.date.today().strftime('%d'))
-            d = datetime.date(yr,mt,dt)
+            yr = int(datetime.date.today().strftime('%Y'))
+            mt = int(datetime.date.today().strftime('%m'))
+            dt = int(datetime.date.today().strftime('%d'))
+            d = datetime.date(yr, mt, dt)
             current_date = d.strftime("%Y%m%d")
             order_number = current_date + str(data.id)
             data.order_number = order_number
@@ -131,6 +130,9 @@ def place_order(request, total=0, quantity=0):
             }
 
             return render(request, 'orders/payments.html', context)
+        else:
+            # Si el formulario no es válido, redirigir o mostrar errores
+            return redirect('checkout')  # o puedes renderizar de nuevo el form con errores
 
     else:
         return redirect('checkout')
