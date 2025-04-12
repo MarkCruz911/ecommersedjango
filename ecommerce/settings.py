@@ -26,6 +26,7 @@ cloudinary.config(
     secure=True
 )
 
+
 print(f"CLOUD_NAME: {os.getenv('CLOUD_NAME')}")
 print(f"API_KEY: {os.getenv('API_KEY_CLOUD')}")
 print(f"API_SECRET: {os.getenv('API_KEY_SECRET_CLOUD')}")
