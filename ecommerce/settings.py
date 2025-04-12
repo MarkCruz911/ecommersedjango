@@ -17,6 +17,7 @@ import os
 import dj_database_url
 import cloudinary
 
+load_dotenv()
 # Configuración explícita de Cloudinary
 cloudinary.config(
     cloud_name=os.getenv('CLOUD_NAME'),
@@ -29,7 +30,7 @@ print(f"CLOUD_NAME: {os.getenv('CLOUD_NAME')}")
 print(f"API_KEY: {os.getenv('API_KEY_CLOUD')}")
 print(f"API_SECRET: {os.getenv('API_KEY_SECRET_CLOUD')}")
 
-load_dotenv()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
