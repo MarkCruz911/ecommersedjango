@@ -62,12 +62,12 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'accounts.apps.AccountsConfig',
     'cloudinary_storage',  # Añadir aquí
     'cloudinary',          # Añadir aquí
     'django.contrib.staticfiles',
     'whitenoise.runserver_nostatic',
     'category',
-    'accounts',
     'store',
     'carts',
     'orders',
