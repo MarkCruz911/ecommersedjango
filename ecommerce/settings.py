@@ -16,7 +16,17 @@ from dotenv import load_dotenv
 import os
 import dj_database_url
 
+# Configuración explícita de Cloudinary
+cloudinary.config(
+    cloud_name=os.getenv('CLOUD_NAME'),
+    api_key=os.getenv('API_KEY_CLOUD'),
+    api_secret=os.getenv('API_KEY_SECRET_CLOUD'),
+    secure=True
+)
 
+print(f"CLOUD_NAME: {os.getenv('CLOUD_NAME')}")
+print(f"API_KEY: {os.getenv('API_KEY_CLOUD')}")
+print(f"API_SECRET: {os.getenv('API_KEY_SECRET_CLOUD')}")
 
 load_dotenv()
 
