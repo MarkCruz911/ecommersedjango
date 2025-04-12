@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'cloudinary_storage',  # Añadir aquí
+    'cloudinary',          # Añadir aquí
     'django.contrib.staticfiles',
     'whitenoise.runserver_nostatic',
     'category',
@@ -58,14 +60,13 @@ INSTALLED_APPS = [
     'orders',
 ]
 
-INSTALLED_APPS += ['cloudinary', 'cloudinary_storage']
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.getenv('CLOUD_NAME'),
     'API_KEY': os.getenv('API_KEY_CLOUD'),
-    'API_SECRET': os.getenv('API_KEY_SECRET_CLOUD')
+    'API_SECRET': os.getenv('API_KEY_SECRET_CLOUD'),
 }
 
 MIDDLEWARE = [
