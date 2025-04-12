@@ -32,7 +32,7 @@
                   <div class="col-md-6">
                     <div class="card" style="text-align:center">
                       <div class="card-body">
-                        <img src="{{ userprofile.profile_picture.url }}" alt="imagen de perfil" width="50" height="50" style="border-radius:50%">
+                        <img src="{% if userprofile.profile_picture %}{{userprofile.profile_picture.url}}{% else %}{% static 'images/perfil.png' %}{% endif %}" alt="imagen de perfil" width="50" height="50" style="border-radius:50%">
                         <br>
                         <p class="mb-0">{{ user.email }}</p>
                         <p>{{ user.phone_number }}</p>
