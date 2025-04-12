@@ -131,9 +131,14 @@ def place_order(request, total=0, quantity=0):
 
             return render(request, 'orders/payments.html', context)
         else:
-            # Si el formulario no es válido, redirigir o mostrar errores
-            return redirect('checkout')  # o puedes renderizar de nuevo el form con errores
-
+           # 👇 Este bloque maneja cuando el formulario NO es válido
+            return render(request, 'orders/checkout.html', {
+                'form': form,
+                'cart_items': cart_items,
+                'total': total,
+                'tax': tax,
+                'grand_total': grand_total,
+            })
     else:
         return redirect('checkout')
 
