@@ -33,13 +33,7 @@ SECRET_KEY = 'tu-clave-secreta-aqui'
 
 
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv('CLOUD_NAME'),
-    'API_KEY': os.getenv('API_KEY_CLOUD'),
-    'API_SECRET': os.getenv('API_KEY_SECRET_CLOUD')
-}
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -65,6 +59,14 @@ INSTALLED_APPS = [
 ]
 
 INSTALLED_APPS += ['cloudinary', 'cloudinary_storage']
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUD_NAME'),
+    'API_KEY': os.getenv('API_KEY_CLOUD'),
+    'API_SECRET': os.getenv('API_KEY_SECRET_CLOUD')
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
