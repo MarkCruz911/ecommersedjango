@@ -196,4 +196,11 @@ ALLOWED_HOSTS=['localhost','web-production-55d8.up.railway.app','web-production-
 CSRF_TRUSTED_ORIGINS=['http://*','https://web-production-3089.up.railway.app']
 
 # Email backend para desarrollo - muestra el email en la consola
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST='smtp.gmail.com'
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER =os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD=os.getenv('EMAIL_HOST_PASSWORD')
+
+print(EMAIL_HOST_USER)
