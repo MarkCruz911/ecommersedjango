@@ -1,43 +1,37 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
 <section class="section-content padding-y bg">
   <div class="container">
-    <!-- ============================ COMPONENT 1 ================================= -->
     <div class="card">
       <div class="row no-gutters">
-        <!-- Columna de imágenes -->
         <aside class="col-md-6">
           <article class="gallery-wrap">
-            <!-- Imagen principal -->
             <div class="img-big-wrap mainImage">
               <div class="img-display-box">
-                <img src="{{ single_product.images.url }}" class="main-product-image">
+                <img src="{{ single_product.images.url }}" class="main-product-image"
+                  alt="{{ single_product.product_name }}">
               </div>
             </div>
-            <!-- Galería de miniaturas -->
             <div class="thumbs-gallery">
               <a href="{{ single_product.images.url }}" target="mainImage" class="thumb-item active">
-                <img src="{{ single_product.images.url }}" alt="Imagen del Producto">
+                <img src="{{ single_product.images.url }}" alt="Thumbnail de {{ single_product.product_name }}">
               </a>
               {% for i in product_gallery %}
               <a href="{{ i.image.url }}" target="mainImage" class="thumb-item">
-                <img src="{{ i.image.url }}" alt="Imagen del Producto">
+                <img src="{{ i.image.url }}" alt="Thumbnail de {{ single_product.product_name }}">
               </a>
               {% endfor %}
             </div>
           </article>
         </aside>
 
-        <!-- Columna de detalles del producto -->
         <main class="col-md-6 border-left">
           <form action="{% url 'add_cart' single_product.id %}" method="POST">
             {% csrf_token %}
             <article class="content-body">
-              <!-- Nombre del producto -->
               <h2 class="product-title">{{ single_product.product_name }}</h2>
 
-              <!-- Calificación del producto -->
               <div class="rating-star">
                 <span>
                   <i class="fa fa-star{% if single_product.averageReview < 0.5 %}-o{% elif single_product.averageReview >= 0.5 and single_product.averageReview < 1 %}-half-o {% endif %}"
@@ -54,47 +48,18 @@
                 </span>
               </div>
 
-              <!-- Precio -->
               <div class="product-price mt-3">
                 <var class="price h3">$ {{ single_product.price }}</var>
               </div>
 
-              <!-- Descripción del producto -->
               <div class="product-description mt-3">
                 <p>{{ single_product.description }}</p>
               </div>
 
               <hr>
 
-              <!-- 
-              <div class="row mt-4">
-                <div class="item-option-select col-md-6">
-                  <h6 class="option-label">Escoge el color</h6>
-                  <select class="form-control custom-select" name="color" required>
-                    <option value="" disabled selected>Seleccionar</option>
-                    {% for i in single_product.variation_set.colors %}
-                    <option value="{{ i.variation_value | lower }}">{{ i.variation_value | capfirst }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>
-
-              
-              <div class="row mt-3">
-                <div class="item-option-select col-md-6">
-                  <h6 class="option-label">Escoge la talla</h6>
-                  <select class="form-control custom-select" name="talla" required>
-                    <option value="" disabled selected>Seleccionar</option>
-                    {% for i in single_product.variation_set.tallas %}
-                    <option value="{{ i.variation_value | lower }}">{{ i.variation_value | capfirst }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>-->
-
               <hr>
 
-              <!-- Botón Agregar al Carrito -->
               <div class="action-buttons mt-4">
                 {% if single_product.stock <= 0 %} <div class="stock-alert">
                   <i class="fas fa-exclamation-circle"></i>
@@ -110,58 +75,112 @@
       </article>
       </form>
       </main>
-
-
-
     </div>
-   <!-- <br>
-
-     ==================== FORMULARIO DE COMBINAR IMÁGENES ==================== 
-    <div class="card mt-4 p-4">
-      <h4 class="mb-3">Combina dos imágenes con Gemini AI</h4>
-
-      {% if error %}
-      <div class="alert alert-danger">{{ error }}</div>
-      {% endif %}
-
-      <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-
-        <div class="form-group">
-          <label for="id_prompt">Prompt:</label>
-          <input type="text" name="prompt" id="id_prompt" class="form-control">
-        </div>
-
-        <div class="form-group">
-          <label for="id_image1">Primera imagen:</label>
-          <input type="file" name="image1" id="id_image1" class="form-control">
-        </div>
-
-        <div class="form-group">
-          <label for="id_image2">Segunda imagen:</label>
-          <input type="file" name="image2" id="id_image2" class="form-control">
-        </div>
-
-        <button type="submit" class="btn btn-primary mt-2">Generar imagen combinada</button>
-      </form>
-
-      {% if result %}
-      <hr>
-      <h5>Imagen Generada:</h5>
-      <img src="{{ result }}" alt="Resultado AI" class="img-fluid my-2">
-      <a href="{{ result }}" download="combined.png" class="btn btn-success">Descargar</a>
-      {% endif %}
-    </div>
-     ====================================================================== -->
   </div>
-  <!-- ============================ COMPONENT 1 END .// ================================= -->
-
   <br>
 
-  <!-- Sección de Reseñas -->
+  <div class="card mt-4 mb-4">
+    <div class="card-header">
+      <h4>Prueba Virtual - Combina prendas con IA</h4>
+      <p class="text-muted">Sube tu foto y combina con la prenda de este producto</p> {# Texto ajustado #}
+    </div>
+    <div class="card-body">
+      <form id="imageCombinaForm" method="POST" action="{% url 'combine_images' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        {# Campo oculto para enviar el ID del producto #}
+        <input type="hidden" name="product_id" value="{{ single_product.id }}">
+        {# Campo oculto para enviar la URL de la segunda imagen (prenda del producto) #}
+        <input type="hidden" name="image2_url" value="{{ single_product.images.url }}">
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="image1"><i class="fas fa-user"></i> Tu foto</label>
+              <div class="custom-file-upload border rounded p-3 text-center">
+                {# Input de tipo file para la foto de la persona #}
+                <input type="file" id="image1" name="image1" accept="image/*" class="d-none">
+                {# Label asociado al input file para que sea clickeable #}
+                <label for="image1" class="d-block cursor-pointer">
+                  {# Área de previsualización para la imagen 1, mostrando la imagen estática por defecto INICIALMENTE #}
+                  <div id="image1Preview" class="image-preview">
+                    <img src="{% static 'images/sujetouno.jpg' %}" class="img-fluid" style="max-height: 200px;"
+                      alt="Tu foto">
+                  </div>
+                </label>
+                {# *** INDICADOR PARA CAMBIAR LA IMAGEN *** #}
+                <p class="mt-2 mb-0 text-muted small">Haz clic en la imagen de arriba para cambiarla por tu foto.</p>
+                {# Opcional: Un botón o enlace explícito#}
+                <a href="#" onclick="document.getElementById('image1').click(); return false;"
+                  class="btn btn-sm btn-outline-secondary mt-2">
+                  <i class="fas fa-upload"></i> Cambiar Foto
+                </a>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group">
+              <label><i class="fas fa-tshirt"></i> Prenda del Producto</label> {# Texto ajustado #}
+              <div class="border rounded p-3 text-center">
+                {# Mostrar la imagen del producto directamente #}
+                <div id="image2Display" class="image-display"> {# Nuevo ID para el contenedor de la imagen mostrada #}
+                  <img src="{{ single_product.images.url }}" class="img-fluid rounded" style="max-height: 200px;"
+                    alt="Prenda del Producto">
+                </div>
+                {# Eliminado el input file y su label para la segunda imagen #}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {# Campo oculto para el prompt #}
+        <input type="hidden" id="prompt" name="prompt"
+          value="Cambia la prenda de vestir de la persona de la primera imagen con la prenda de la segunda imagen, manteniendo el diseño de la ropa y asegurando que la ropa se ajuste correctamente y mantenga las proporciones naturales. Por favor, presta especial atención a los detalles faciales de la persona, el cabello, manteniendo su rostro claro y bien definido y el fondo que sea gris con iluminacion.">
+        {# Eliminado el form-group y textarea visible para el prompt #}
+
+
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <div id="usageLimit" class="alert alert-info">
+              Te quedan <span id="remainingUses">10</span> generaciones hoy
+            </div>
+          </div>
+          <div class="col-md-6 text-right">
+            <button type="submit" id="generateBtn" class="btn btn-primary">
+              <i class="fas fa-magic"></i> Generar Combinación
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <div id="resultContainer" class="mt-4 text-center" style="display: none;">
+        <h5>Resultado</h5>
+        <div class="result-image-container">
+          <img id="resultImage" src="" alt="Imagen combinada" class="img-fluid rounded">
+        </div>
+        <p id="tryAgainMessage">Si no te gusta el resultado, inténtalo de nuevo.</p>
+        <a id="downloadBtn" href="#" class="btn btn-success mt-3" download="combinacion_prenda.png">
+          <i class="fas fa-download"></i> Descargar Imagen
+        </a>
+      </div>
+
+      <div id="loadingSpinner" class="text-center mt-4" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+          <span class="sr-only">Generando imagen...</span>
+        </div>
+        <p>Estamos combinando las imágenes, esto puede tardar unos segundos...</p>
+      </div>
+
+      <div id="errorMessage" class="alert alert-danger mt-3" style="display: none;"></div>
+    </div>
+  </div>
+
+  </div>
+  <br>
+
   <div class="row">
     <div class="col-md-9">
-      <!-- Formulario para enviar reseña -->
       <div class="card review-form-card">
         <div class="card-body">
           <h5 class="card-title">Escribe tu reseña o comentario</h5>
@@ -224,7 +243,6 @@
         </div>
       </div>
 
-      <!-- Lista de reseñas existentes -->
       <div class="reviews-section mt-4">
         <header class="section-heading">
           <h3>Reseñas de compradores verificados</h3>
@@ -244,7 +262,6 @@
           </div>
         </header>
 
-        <!-- Reseñas individuales -->
         {% for review in reviews %}
         <article class="review-box mb-3">
           <div class="review-header">
@@ -278,10 +295,390 @@
   </div>
   </div>
 </section>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Manejar clics en miniaturas
+    const thumbItems = document.querySelectorAll('.thumb-item');
+    const mainImage = document.querySelector('.main-product-image');
 
-<!-- Estilos CSS para mejorar el diseño -->
+    thumbItems.forEach(item => {
+      item.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        // Actualizar imagen principal
+        const imgUrl = this.getAttribute('href');
+        mainImage.src = imgUrl;
+
+        // Actualizar clase activa
+        thumbItems.forEach(thumb => thumb.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  });
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const defaultImage1Url = "{% static 'images/sujetouno.jpg' %}";
+    const image1Input = document.getElementById('image1');
+    const image1Preview = document.getElementById('image1Preview');
+    const remainingUsesSpan = document.getElementById('remainingUses');
+    const generateBtn = document.getElementById('generateBtn');
+    const usageLimitDiv = document.getElementById('usageLimit');
+    const errorMessageDiv = document.getElementById('errorMessage');
+    const loadingSpinnerDiv = document.getElementById('loadingSpinner');
+    const resultContainerDiv = document.getElementById('resultContainer');
+
+    // --- Funciones de Previsualización de Imágenes ---
+
+    if (image1Input && image1Preview) {
+      // Mostrar la imagen estática por defecto al cargar la página
+      image1Preview.innerHTML = `<img src="${defaultImage1Url}" class="img-fluid" style="max-height: 200px;" alt="Tu foto">`;
+
+      image1Input.addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (event) {
+            // Mostrar la imagen de previsualización del archivo seleccionado
+            image1Preview.innerHTML = `<img src="${event.target.result}" class="img-fluid" style="max-height: 200px;">`;
+          };
+          reader.readAsDataURL(file);
+        } else {
+          // Si se cancela la selección, mostrar la imagen estática por defecto
+          image1Preview.innerHTML = `<img src="${defaultImage1Url}" class="img-fluid" style="max-height: 200px;" alt="Tu foto">`;
+        }
+      });
+    }
+
+    // --- Lógica de Límite de Uso ---
+
+    const MAX_USES = 10; // Definimos el límite aquí
+
+    function checkUsageLimit() {
+      let usageData = localStorage.getItem('imageCombinerUsage');
+      const today = new Date().toISOString().split('T')[0];
+
+      if (usageData) {
+        usageData = JSON.parse(usageData);
+        if (usageData.date === today) {
+          const remaining = MAX_USES - usageData.count;
+          remainingUsesSpan.textContent = remaining;
+
+          if (remaining <= 0) {
+            generateBtn.disabled = true;
+            usageLimitDiv.className = 'alert alert-warning';
+            usageLimitDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Has alcanzado el límite de generaciones por hoy.';
+          }
+        } else {
+          // Nuevo día, resetear contador
+          localStorage.setItem('imageCombinerUsage', JSON.stringify({
+            date: today,
+            count: 0
+          }));
+          remainingUsesSpan.textContent = MAX_USES;
+          generateBtn.disabled = false;
+          usageLimitDiv.className = 'alert alert-info';
+          usageLimitDiv.innerHTML = `Te quedan <span id="remainingUses">${MAX_USES}</span> generaciones hoy`;
+        }
+      } else {
+        // Primera vez, inicializar contador
+        localStorage.setItem('imageCombinerUsage', JSON.stringify({
+          date: today,
+          count: 0
+        }));
+        remainingUsesSpan.textContent = MAX_USES;
+        generateBtn.disabled = false;
+        usageLimitDiv.className = 'alert alert-info';
+        usageLimitDiv.innerHTML = `Te quedan <span id="remainingUses">${MAX_USES}</span> generaciones hoy`;
+      }
+    }
+
+    function updateUsageCount() {
+      let usageData = localStorage.getItem('imageCombinerUsage');
+      const today = new Date().toISOString().split('T')[0];
+
+      if (usageData) {
+        usageData = JSON.parse(usageData);
+        if (usageData.date === today) {
+          const newCount = usageData.count + 1;
+          localStorage.setItem('imageCombinerUsage', JSON.stringify({
+            date: today,
+            count: newCount
+          }));
+
+          const remaining = MAX_USES - newCount;
+          remainingUsesSpan.textContent = remaining;
+
+          if (remaining <= 0) {
+            generateBtn.disabled = true;
+            usageLimitDiv.className = 'alert alert-warning';
+            usageLimitDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Has alcanzado el límite de generaciones por hoy.';
+          }
+        }
+      }
+    }
+
+
+    // --- Manejar envío del formulario con Lógica de Imágenes y Spinner ---
+
+    document.getElementById('imageCombinaForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const remainingUses = parseInt(remainingUsesSpan.textContent);
+      if (remainingUses <= 0) {
+        errorMessageDiv.textContent = 'Has alcanzado el límite de generaciones por hoy.';
+        errorMessageDiv.style.display = 'block';
+        return;
+      }
+
+      // Mostrar spinner
+      loadingSpinnerDiv.style.display = 'block';
+      errorMessageDiv.style.display = 'none';
+      resultContainerDiv.style.display = 'none'; // Ocultar resultado anterior
+
+      const formData = new FormData();
+
+      formData.append('product_id', document.querySelector('input[name="product_id"]').value);
+      formData.append('image2_url', document.querySelector('input[name="image2_url"]').value);
+      formData.append('prompt', document.getElementById('prompt').value);
+      formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+
+      const image1File = image1Input.files[0];
+
+      if (image1File) {
+        formData.append('image1', image1File);
+      } else {
+        try {
+          const response = await fetch(defaultImage1Url);
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+          const blob = await response.blob();
+          const defaultFile = new File([blob], 'sujetouno.jpg', {
+            type: blob.type
+          });
+          formData.append('image1', defaultFile);
+
+        } catch (error) {
+          loadingSpinnerDiv.style.display = 'none';
+          const errorMsg = 'Error al cargar la imagen estática por defecto: ' + error.message;
+          errorMessageDiv.textContent = errorMsg;
+          errorMessageDiv.style.display = 'block';
+          console.error('Error fetching default static image:', error);
+          return;
+        }
+      }
+
+      fetch('{% url "combine_images" %}', {
+        method: 'POST',
+        body: formData,
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // --- MOVI LA LLAMADA A updateUsageCount() AQUÍ ---
+            updateUsageCount();
+
+            const resultImageElement = document.getElementById('resultImage');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const resultContainer = document.getElementById('resultContainer');
+
+            const tempImage = new Image();
+
+            tempImage.onload = function () {
+              loadingSpinner.style.display = 'none';
+              resultContainer.style.display = 'block';
+              resultImageElement.src = data.image_url;
+              downloadBtn.href = data.image_url;
+            };
+
+            tempImage.onerror = function () {
+              loadingSpinner.style.display = 'none';
+              const errorMsg = 'Error al cargar la imagen generada.';
+              document.getElementById('errorMessage').textContent = errorMsg;
+              document.getElementById('errorMessage').style.display = 'block';
+              console.error('Error loading generated image:', data.image_url);
+            };
+
+            tempImage.src = data.image_url;
+
+
+          } else {
+            loadingSpinnerDiv.style.display = 'none';
+            const errorMsg = data.generated_text && data.generated_text.length > 0 ?
+              data.generated_text :
+              (data.error || 'Ha ocurrido un error al generar la imagen.');
+            errorMessageDiv.textContent = errorMsg;
+            errorMessageDiv.style.display = 'block';
+          }
+        })
+        .catch(error => {
+          // Manejar errores de red u otros errores de la petición
+          loadingSpinnerDiv.style.display = 'none';
+          errorMessageDiv.textContent = 'Error de conexión o del servidor. Inténtalo de nuevo.';
+          errorMessageDiv.style.display = 'block';
+          console.error('Error en la petición Fetch:', error);
+        });
+    });
+
+
+    // --- Inicialización ---
+    checkUsageLimit(); // Llama a esto para mostrar el contador inicial y habilitar/deshabilitar el botón
+  });
+</script>
 <style>
-  /* Estilos generales */
+  /*
+  CORRECCIONES APLICADAS AQUÍ:
+  - Se ajustan las alturas mínimas y máximas de los contenedores principales de imagen.
+  - Se aplica flexbox a estos contenedores para controlar la distribución de sus contenidos.
+  - Se ajusta el espaciado interno del contenedor custom-file-upload.
+  - Se asegura que las imágenes se ajusten correctamente dentro de sus contenedores.
+  - Se añade el estilo para el mensaje "Inténtalo de nuevo".
+  */
+
+  /* Target the main containers for both image sections */
+  /* Aplica a la caja de 'Tu foto' (.custom-file-upload) y a la caja de 'Prenda del Producto' (el div que contiene la imagen) */
+  .col-md-6 .custom-file-upload,
+    /* Contenedor para la primera imagen upload */
+  .col-md-6 .border.rounded.p-3.text-center /* Contenedor para la segunda imagen display */
+    {
+    min-height: 250px;
+    /* Set a consistent minimum height */
+    /* You can use a fixed height like height: 250px; if you don't want it to grow */
+    display: flex;
+    flex-direction: column;
+    /* Stack children vertically */
+    justify-content: space-between;
+    /* Distribute space vertically */
+    align-items: center;
+    /* Center children horizontally */
+    padding: 15px;
+    /* Adjust padding as needed */
+    box-sizing: border-box;
+    /* Include padding and border in the element's total width and height */
+  }
+
+  /* Estilos específicos para el área de subida (Tu foto) - Mantiene borde y cursor */
+  .custom-file-upload {
+    cursor: pointer;
+    border: 2px dashed #ccc;
+    transition: all 0.3s ease;
+    width: 100%; /* Asegura que ocupe todo el ancho de su columna */
+  }
+
+  .custom-file-upload:hover {
+    border-color: #007bff;
+    background-color: rgba(0, 123, 255, 0.05);
+  }
+
+  /* Contenedor interno de previsualización de la primera imagen (Tu foto) */
+  .custom-file-upload .image-preview {
+    flex-grow: 1;
+    /* Allows the image preview area to take available vertical space */
+    width: 100%;
+    /* Ensure it spans the width */
+    display: flex;
+    /* Use flex to center the image inside the preview */
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    /* Hide overflowing image parts */
+    margin-bottom: 10px;
+    /* Space below the image preview itself */
+    /* Elimina o ajusta estas reglas si se contradicen con el padre flex */
+    /* height: 100%; */
+    /* flex-direction: column; */
+  }
+
+
+  /* Ajusta las imágenes dentro de los contenedores (Tu foto y Prenda del Producto) */
+  .custom-file-upload .image-preview img,
+  #image2Display img {
+    max-width: 100%;
+    /* Asegura que la imagen no se desborde horizontalmente */
+    max-height: 100%;
+    /* Asegura que la imagen no se desborde verticalmente dentro del contenedor limitado por max-height */
+    object-fit: contain;
+    /* La imagen se ajusta manteniendo su relación de aspecto */
+    /* Importante: Elimina el style="max-height: 200px;" de las etiquetas <img> en tu HTML */
+  }
+
+
+  .image-preview i {
+    font-size: 2.5rem;
+    color: #aaa;
+    margin-bottom: 10px;
+  }
+
+  /* Ajustar márgenes para el texto y el botón dentro del primer contenedor */
+  .custom-file-upload p.small {
+    margin-top: 0;
+    /* Reset default margin */
+    margin-bottom: 5px;
+    /* Small space below the text */
+    line-height: 1.3; /* Ajustar interlineado si es necesario */
+  }
+
+  .custom-file-upload .btn {
+    margin-top: 5px;
+    /* Small space above the button */
+    /* Importante: Elimina las clases de Bootstrap mt-2 y mb-0 de la etiqueta <p> y el <a> del botón en tu HTML */
+  }
+
+
+  /* Estilo para el contenedor de la imagen generada */
+  .result-image-container {
+    max-width: 100%;
+    max-height: 400px;
+    /* Altura máxima para la imagen generada */
+    overflow: hidden;
+    margin: 0 auto;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+    display: flex; /* Usar flexbox para centrar la imagen dentro */
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Estilo para la imagen generada */
+  #resultImage {
+    max-height: 380px;
+    /* Altura máxima de la imagen dentro de su contenedor */
+    max-width: 100%; /* Asegura que no se desborde */
+    width: auto;
+    /* Permite que el ancho se ajuste automáticamente manteniendo la relación de aspecto */
+    display: block;
+    /* Asegura que margin: auto funcione para centrarla si es más estrecha que el contenedor */
+    /* margin: 0 auto; Redundante si el padre es flex y justify/align son center */
+  }
+
+  /* Estilo para el mensaje "Inténtalo de nuevo" */
+  #tryAgainMessage {
+    text-align: center;
+    /* Centra el texto */
+    margin-top: 15px;
+    /* Espacio encima del texto */
+    font-size: 0.9em;
+    /* Tamaño de fuente un poco más pequeño */
+    color: #555;
+    /* Un color de texto suave */
+  }
+
+
+  #loadingSpinner {
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .cursor-pointer {
+    cursor: pointer;
+  }
+
+  /* Estilos generales (mantener los que ya tenías) */
   .section-content {
     padding: 40px 0;
     background-color: #f8f9fa;
@@ -564,26 +961,4 @@
   }
 </style>
 
-<!-- Script para la funcionalidad de la galería -->
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    // Manejar clics en miniaturas
-    const thumbItems = document.querySelectorAll('.thumb-item');
-    const mainImage = document.querySelector('.main-product-image');
-
-    thumbItems.forEach(item => {
-      item.addEventListener('click', function (e) {
-        e.preventDefault();
-
-        // Actualizar imagen principal
-        const imgUrl = this.getAttribute('href');
-        mainImage.src = imgUrl;
-
-        // Actualizar clase activa
-        thumbItems.forEach(thumb => thumb.classList.remove('active'));
-        this.classList.add('active');
-      });
-    });
-  });
-</script>
 {% endblock %}

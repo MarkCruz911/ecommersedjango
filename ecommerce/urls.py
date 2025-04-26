@@ -28,4 +28,5 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('orders/', include('orders.urls')),
     path('projects_ai/', views.projects_ai, name='projects_ai'),
+    path('combine-images/', views.combine_images, name='combine_images'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

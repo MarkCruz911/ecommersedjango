@@ -97,7 +97,7 @@ MIDDLEWARE = [
 
 SESSION_EXPIRE_SECONDS = 1800
 SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
-SESSION_TIMEOUT_REDIRECT = 'accounts/login'
+SESSION_TIMEOUT_REDIRECT = '/accounts/login/'
 
 ROOT_URLCONF = 'ecommerce.urls'
 
@@ -172,8 +172,8 @@ STATICFILES_DIRS = [
     'ecommerce/static'
 ]
 
-MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
@@ -204,3 +204,11 @@ EMAIL_HOST_USER =os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD=os.getenv('EMAIL_HOST_PASSWORD')
 
 print(EMAIL_HOST_USER)
+
+# Asegúrate de crear estos directorios
+import os
+if not os.path.exists(os.path.join(MEDIA_ROOT, 'temp_images')):
+    os.makedirs(os.path.join(MEDIA_ROOT, 'temp_images'))
+
+if not os.path.exists(os.path.join(MEDIA_ROOT, 'combined_images')):
+    os.makedirs(os.path.join(MEDIA_ROOT, 'combined_images'))
